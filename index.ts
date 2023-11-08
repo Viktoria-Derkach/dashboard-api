@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { userRouter } from './users/users.js';
 
 const port = 8000;
@@ -14,18 +14,13 @@ app.all('/hello', (req, res, next) => {
   next();
 });
 
-const cb = (req, res, next) => {
-  console.log('CALLBACK');
-  next();
-};
-
 app.get('/hel?lo', (req, res) => {
   throw new Error('Erroe!!!!!');
 });
 
 app.use('/users', userRouter);
 
-app.use((err, req, res, next) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.log(err.message);
   res.status(500).send(err.message);
 });
