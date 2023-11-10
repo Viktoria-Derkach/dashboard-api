@@ -8,17 +8,17 @@ export class App {
   server: Server;
   port: number;
   logger: LoggerService;
-  userRouter: UserController;
+  userController: UserController;
 
-  constructor(logger: LoggerService, userRouter: UserController) {
+  constructor(logger: LoggerService, userController: UserController) {
     this.app = express();
     this.port = 8000;
     this.logger = logger;
-    this.userRouter = userRouter;
+    this.userController = userController;
   }
 
   useRoutes() {
-    this.app.use('/users', this.userRouter.router);
+    this.app.use('/users', this.userController.router);
   }
 
   public async init() {

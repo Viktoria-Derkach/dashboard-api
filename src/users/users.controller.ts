@@ -1,5 +1,5 @@
 import { BaseController } from '../common/base.controller';
-import { NextFunction, Request, Response, Router, IRouter } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { IControllerRoute } from '../common/route.interface';
 import { LoggerService } from '../logger/logger.server';
 
@@ -9,14 +9,14 @@ export class UserController extends BaseController {
     this.bindRoute(this.getUserRoutes());
   }
 
-  login(req: Request, res: Response) {
+  login(req: Request, res: Response, next: NextFunction) {
     this.ok(res, 'User is signed in');
   }
-  register(req: Request, res: Response) {
+  register(req: Request, res: Response, next: NextFunction) {
     this.ok(res, 'User is registered');
   }
 
-  getUserRoutes(): IControllerRoute[] {
+  private getUserRoutes(): IControllerRoute[] {
     return [
       {
         path: '/login',
