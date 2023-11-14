@@ -7,30 +7,30 @@ import { inject, injectable } from 'inversify';
 import { TYPES } from '../types';
 import { ILogger } from '../logger/logger.interface';
 import 'reflect-metadata';
-import { IUsers } from './users.interface';
+import { IUserController } from './users.interface';
 
 @injectable()
-export class UserController extends BaseController implements IUsers {
-  constructor(@inject(TYPES.ILogger) private loggerService: ILogger) {
-    super(loggerService);
-    this.bindRoute(this.getUserRoutes());
-  }
+export class UserController extends BaseController implements IUserController {
+	constructor(@inject(TYPES.ILogger) private loggerService: ILogger) {
+		super(loggerService);
+		this.bindRoute(this.getUserRoutes());
+	}
 
-  login(req: Request, res: Response, next: NextFunction) {
-    this.ok(res, 'User is signed in');
-  }
-  register(req: Request, res: Response, next: NextFunction) {
-    this.ok(res, 'User is registered');
-  }
+	login(req: Request, res: Response, next: NextFunction): void {
+		this.ok(res, 'User is signed in');
+	}
+	register(req: Request, res: Response, next: NextFunction): void {
+		this.ok(res, 'User is registered');
+	}
 
-  private getUserRoutes(): IControllerRoute[] {
-    return [
-      {
-        path: '/login',
-        func: this.login,
-        method: 'post',
-      },
-      { path: '/register', func: this.register, method: 'post' },
-    ];
-  }
+	private getUserRoutes(): IControllerRoute[] {
+		return [
+			{
+				path: '/login',
+				func: this.login,
+				method: 'post',
+			},
+			{ path: '/register', func: this.register, method: 'post' },
+		];
+	}
 }

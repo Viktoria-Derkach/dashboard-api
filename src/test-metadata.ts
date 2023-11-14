@@ -1,21 +1,21 @@
 import 'reflect-metadata';
 
 function Injectable(key: string) {
-  return (target: Function) => {
-    Reflect.defineMetadata(key, 1, target);
-    const meta = Reflect.getMetadata(key, target);
-    console.log(meta);
-  };
+	return (target: Function) => {
+		Reflect.defineMetadata(key, 1, target);
+		const meta = Reflect.getMetadata(key, target);
+		console.log(meta);
+	};
 }
 
 function Prop(target: Object, name: string) {}
 
 @Injectable('C')
 export class C {
-  @Prop prop: number;
+	@Prop prop: number;
 }
 
 @Injectable('D')
 export class D {
-  constructor(c: any) {}
+	constructor(c: any) {}
 }
