@@ -16,7 +16,7 @@ import { ValidateMiddleware } from '../common/validate.middleware';
 import { sign } from 'jsonwebtoken';
 import { IConfigService } from '../config/config.service.interface';
 import { IUserService } from './users.service.interface';
-import { AuthValidateMiddleware } from '../common/auth.validate.middleware';
+import { AuthGuard } from '../common/auth.guard';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
@@ -55,9 +55,9 @@ export class UserController extends BaseController implements IUserController {
 	}
 
 	async info({ user }: Request, res: Response, next: NextFunction): Promise<void> {
-		const userInfo = await this.userService.findUser(user);
+		const userInfo = await this.userService.getUserInfo(user);
 		if (!userInfo) {
-			return next(new HTTPError(401, 'Authorization error', 'Info'));
+			return next(new HTTPError(401, 'No user found', 'Info'));
 		}
 		this.ok(res, { email: userInfo.email, id: userInfo.id });
 	}
@@ -101,7 +101,7 @@ export class UserController extends BaseController implements IUserController {
 				path: '/info',
 				func: this.info,
 				method: 'get',
-				middlewares: [new AuthValidateMiddleware()],
+				middlewares: [new AuthGuard()],
 			},
 		];
 	}
