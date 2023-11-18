@@ -14,8 +14,8 @@ export class AuthMiddleware implements IMiddleWare {
 					next();
 				}
 			});
-			// bearer jwt
+		} else {
+			next();
 		}
-		next();
 	}
 }

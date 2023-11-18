@@ -16,6 +16,7 @@ import { ValidateMiddleware } from '../common/validate.middleware';
 import { sign } from 'jsonwebtoken';
 import { IConfigService } from '../config/config.service.interface';
 import { IUserService } from './users.service.interface';
+import { AuthValidateMiddleware } from '../common/auth.validate.middleware';
 
 @injectable()
 export class UserController extends BaseController implements IUserController {
@@ -40,6 +41,7 @@ export class UserController extends BaseController implements IUserController {
 		const jwt = await this.signJWT(body.email, this.configService.get('SECRET'));
 		this.ok(res, { jwt });
 	}
+
 	async register(
 		{ body }: Request<{}, {}, UserRegisterDto>,
 		res: Response,
@@ -53,7 +55,11 @@ export class UserController extends BaseController implements IUserController {
 	}
 
 	async info({ user }: Request, res: Response, next: NextFunction): Promise<void> {
-		this.ok(res, { email: user });
+		const userInfo = await this.userService.findUser(user);
+		if (!userInfo) {
+			return next(new HTTPError(401, 'Authorization error', 'Info'));
+		}
+		this.ok(res, { email: userInfo.email, id: userInfo.id });
 	}
 
 	private signJWT(email: string, secret: string): Promise<string> {
@@ -95,7 +101,7 @@ export class UserController extends BaseController implements IUserController {
 				path: '/info',
 				func: this.info,
 				method: 'get',
-				middlewares: [new ValidateMiddleware(UserLoginDto)],
+				middlewares: [new AuthValidateMiddleware()],
 			},
 		];
 	}
