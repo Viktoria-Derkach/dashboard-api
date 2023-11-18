@@ -32,12 +32,8 @@ export class UserService implements IUserService {
 			return false;
 		}
 
-		const newUser = new User(email, existedUser.name);
-		const isTheSamePassword = await newUser.checkPassword(password, existedUser.password);
+		const newUser = new User(existedUser.email, existedUser.name, existedUser.password);
 
-		if (isTheSamePassword) {
-			return true;
-		}
-		return false;
+		return newUser.comparePassword(password);
 	}
 }

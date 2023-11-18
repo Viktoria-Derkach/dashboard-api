@@ -31,10 +31,10 @@ export class UserController extends BaseController implements IUserController {
 	): Promise<void> {
 		const result = await this.userService.validateUser(body);
 		if (!result) {
-			return next(new HTTPError(401, 'Login or password is incorrect', 'UserController'));
+			return next(new HTTPError(401, 'Authorization error', 'Login'));
 		}
 
-		this.ok(res, { email: body.email });
+		this.ok(res, {});
 	}
 	async register(
 		{ body }: Request<{}, {}, UserRegisterDto>,
@@ -45,7 +45,7 @@ export class UserController extends BaseController implements IUserController {
 		if (!result) {
 			return next(new HTTPError(422, 'There is already such user'));
 		}
-		this.ok(res, { email: result.email, id: result.id });
+		this.ok(res, {});
 	}
 
 	private getUserRoutes(): IControllerRoute[] {

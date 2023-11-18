@@ -5,7 +5,12 @@ export class User {
 	constructor(
 		private readonly _email: string,
 		private readonly _name: string,
-	) {}
+		passwordHash?: string,
+	) {
+		if (passwordHash) {
+			this._password = passwordHash;
+		}
+	}
 	get email(): string {
 		return this._email;
 	}
@@ -24,11 +29,7 @@ export class User {
 		this._password = await hash(pass, salt);
 	}
 
-	public async checkPassword(pass: string, hash: string): Promise<boolean> {
-		const isTheSamePassword = await compare(pass, hash).then((res) => res === true);
-		if (!isTheSamePassword) {
-			return false;
-		}
-		return true;
+	public async comparePassword(pass: string): Promise<boolean> {
+		return await compare(pass, this._password).then((res) => res === true);
 	}
 }
