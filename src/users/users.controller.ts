@@ -24,9 +24,17 @@ export class UserController extends BaseController implements IUserController {
 		this.bindRoute(this.getUserRoutes());
 	}
 
-	login(req: Request<{}, {}, UserLoginDto>, res: Response, next: NextFunction): void {
-		console.log(req.body);
-		this.ok(res, 'User is signed in');
+	async login(
+		{ body }: Request<{}, {}, UserLoginDto>,
+		res: Response,
+		next: NextFunction,
+	): Promise<void> {
+		const result = await this.userService.validateUser(body);
+		if (!result) {
+			return next(new HTTPError(401, 'Login or password is incorrect', 'UserController'));
+		}
+
+		this.ok(res, { email: body.email });
 	}
 	async register(
 		{ body }: Request<{}, {}, UserRegisterDto>,
@@ -52,6 +60,7 @@ export class UserController extends BaseController implements IUserController {
 				path: '/login',
 				func: this.login,
 				method: 'post',
+				middlewares: [new ValidateMiddleware(UserLoginDto)],
 			},
 		];
 	}
