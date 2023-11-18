@@ -49,8 +49,13 @@ export class UserController extends BaseController implements IUserController {
 		if (!result) {
 			return next(new HTTPError(422, 'There is already such user'));
 		}
-		this.ok(res, {});
+		this.ok(res, { email: body.email, id: result.id });
 	}
+
+	async info({ user }: Request, res: Response, next: NextFunction): Promise<void> {
+		this.ok(res, { email: user });
+	}
+
 	private signJWT(email: string, secret: string): Promise<string> {
 		return new Promise<string>((resolve, reject) => {
 			sign(
@@ -84,6 +89,12 @@ export class UserController extends BaseController implements IUserController {
 				path: '/login',
 				func: this.login,
 				method: 'post',
+				middlewares: [new ValidateMiddleware(UserLoginDto)],
+			},
+			{
+				path: '/info',
+				func: this.info,
+				method: 'get',
 				middlewares: [new ValidateMiddleware(UserLoginDto)],
 			},
 		];
