@@ -54,44 +54,35 @@ describe('User Service', () => {
 		expect(createdUser?.password).not.toEqual('1');
 	});
 
-	it('validateUser with correct password', async () => {
-		usersRepository.find = jest
-			.fn()
-			.mockImplementationOnce((email: string): UserModel | null =>
-				createdUser?.email === email ? createdUser : null,
-			);
-		const isValidatedUser = await usersService.validateUser({
+	it('validateUser - success', async () => {
+		usersRepository.find = jest.fn().mockReturnValueOnce(createdUser);
+
+		const res = await usersService.validateUser({
 			email: 'vika@gmail.com',
 			password: '1234',
 		});
 
-		expect(isValidatedUser).toEqual(true);
+		expect(res).toBeTruthy();
 	});
-	it('validateUser with incorrect password', async () => {
-		usersRepository.find = jest
-			.fn()
-			.mockImplementationOnce((email: string): UserModel | null =>
-				createdUser?.email === email ? createdUser : null,
-			);
+	it('validateUser - wrong password', async () => {
+		usersRepository.find = jest.fn().mockReturnValueOnce(createdUser);
+
 		const isValidatedUser = await usersService.validateUser({
 			email: 'vika@gmail.com',
 			password: '12345',
 		});
 
-		expect(isValidatedUser).toEqual(false);
+		expect(isValidatedUser).toBeFalsy();
 	});
 
-	it('validateUser with incorrect email', async () => {
-		usersRepository.find = jest
-			.fn()
-			.mockImplementationOnce((email: string): UserModel | null =>
-				createdUser?.email === email ? createdUser : null,
-			);
+	it('validateUser - wrong user', async () => {
+		usersRepository.find = jest.fn().mockReturnValueOnce(null);
+
 		const isValidatedUser = await usersService.validateUser({
 			email: '2vika@gmail.com',
 			password: '1234',
 		});
 
-		expect(isValidatedUser).toEqual(false);
+		expect(isValidatedUser).toBeFalsy();
 	});
 });
