@@ -53,4 +53,45 @@ describe('User Service', () => {
 		expect(createdUser?.id).toEqual(1);
 		expect(createdUser?.password).not.toEqual('1');
 	});
+
+	it('validateUser with correct password', async () => {
+		usersRepository.find = jest
+			.fn()
+			.mockImplementationOnce((email: string): UserModel | null =>
+				createdUser?.email === email ? createdUser : null,
+			);
+		const isValidatedUser = await usersService.validateUser({
+			email: 'vika@gmail.com',
+			password: '1234',
+		});
+
+		expect(isValidatedUser).toEqual(true);
+	});
+	it('validateUser with incorrect password', async () => {
+		usersRepository.find = jest
+			.fn()
+			.mockImplementationOnce((email: string): UserModel | null =>
+				createdUser?.email === email ? createdUser : null,
+			);
+		const isValidatedUser = await usersService.validateUser({
+			email: 'vika@gmail.com',
+			password: '12345',
+		});
+
+		expect(isValidatedUser).toEqual(false);
+	});
+
+	it('validateUser with incorrect email', async () => {
+		usersRepository.find = jest
+			.fn()
+			.mockImplementationOnce((email: string): UserModel | null =>
+				createdUser?.email === email ? createdUser : null,
+			);
+		const isValidatedUser = await usersService.validateUser({
+			email: '2vika@gmail.com',
+			password: '1234',
+		});
+
+		expect(isValidatedUser).toEqual(false);
+	});
 });
