@@ -27,6 +27,7 @@ describe('Users e2e', () => {
 		});
 		jwt = res.body.jwt;
 
+		expect(res.body.jwt).not.toBeUndefined();
 		expect(res.statusCode).toBe(200);
 	});
 
@@ -39,9 +40,14 @@ describe('Users e2e', () => {
 	});
 
 	it('Info - success', async () => {
+		const login = await request(application.app).post('/users/login').send({
+			email: 'viki2@viki.viki',
+			password: '12345',
+		});
+
 		const res = await request(application.app)
 			.get('/users/info')
-			.set('Authorization', `Bearer ${jwt}`);
+			.set('Authorization', `Bearer ${login.body.jwt}`);
 
 		expect(res.body.email).toBe('viki2@viki.viki');
 		expect(res.statusCode).toBe(200);
